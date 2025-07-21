@@ -65,5 +65,5 @@ def perform_eda(file_path, file_label):
         print(f"Missing values plot saved as PNG in {output_dir}")
 
 # Beispielhafte Dateien (anpassen!)
-#perform_eda("cmd_daten.csv", "CMD Daten")
-perform_eda("203 - Reference Numbers.csv", "TecDoc Daten 203 ")
+# perform_eda("cmd_daten.csv", "CMD Daten")
+perform_eda("400_Article_Linkage.csv", "400 Article Linkage")

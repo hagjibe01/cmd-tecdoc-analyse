@@ -2,6 +2,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
+import xml.etree.ElementTree as ET
+
 
 # EDA-Funktion mit zusätzlicher Ausgabe als CSV und PNG
 def perform_eda(file_path, file_label):
@@ -64,6 +66,6 @@ def perform_eda(file_path, file_label):
         plt.close()
         print(f"Missing values plot saved as PNG in {output_dir}")
 
-# Beispielhafte Dateien (anpassen!)
 # perform_eda("cmd_daten.csv", "CMD Daten")
-perform_eda("400_Article_Linkage.csv", "400 Article Linkage")
+# perform_eda("beispiel.xml", "Beispiel XML")
+perform_eda("", "TecCMD_Plattform_Daten-02")

@@ -70,9 +70,49 @@ def perform_eda(file_path, file_label):
         plt.savefig(f"{output_dir}/top_missing_percentage_{file_label}.png")
         plt.close()
 
-   
+           # 7. Boxplot ausgewählter numerischer Spalten
+    """ Lieferant MAHLE
+    boxplot_columns = [
+        "gross_amount",
+        "net_amount",
+        "recom_retail_amount",
+        "recom_garage_amount",
+        "core_amount",
+        "packaging_dimension_length",
+        "packaging_dimension_width",
+        "packaging_dimension_height",
+        "packaging_weight",
+        "packaging_volume"
+    ]"""
+    """ Lieferant TMD"""
+    boxplot_columns_TMD = [
+    "gross_amount",
+    "net_amount",
+    "recom_retail_amount",
+    "recom_garage_amount",
+    "packaging_dimension_length",
+    "packaging_dimension_width",
+    "packaging_dimension_height",
+    "packaging_weight",
+    "packaging_volume"
+    ]
+
+
+    # Filtere nur Spalten, die im DataFrame existieren und mehr als 10 nicht-leere Werte haben
+    valid_columns = [col for col in boxplot_columns_TMD if col in df.columns and df[col].notnull().sum() > 10]
+
+    if valid_columns:
+        plt.figure(figsize=(12, 6))
+        sns.boxplot(data=df[valid_columns], orient="h", showfliers=False)  # ohne Ausreißer
+        plt.title(f"Boxplot ausgewählter numerischer Felder ({file_label})")
+        plt.tight_layout()
+        plt.savefig(f"{output_dir}/boxplot_{file_label}.png")
+        plt.close()
+        print(f"Boxplot gespeichert unter: {output_dir}/boxplot_{file_label}.png")
+    else:
+        print("Keine geeigneten Spalten für Boxplot vorhanden.")
 
 
 # perform_eda("cmd_daten.csv", "CMD Daten")
 # perform_eda("beispiel.xml", "Beispiel XML")
-perform_eda("mahle_001000106983000000000074658001_data_2025-07-16-07-16-34-689.csv", "TecCMD_BusinessCloud_Daten_Mahle-01")
+perform_eda("tmd_001000106869000000000065516001_data_2025-07-15-09-42-29-416.csv", "TecCMD_BusinessCloud_Daten_TMD-02")

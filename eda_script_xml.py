@@ -101,7 +101,20 @@ def perform_eda(file_path, file_label):
         plt.close()
         print(f"Plot der fehlenden Werte gespeichert unter {output_dir}")
 
+
+    # 7. Visualisierung: Anzahl unterschiedlicher Werte pro Spalte
+    unique_counts = df.nunique().sort_values(ascending=True)
+    plt.figure(figsize=(10, 6))
+    sns.barplot(x=unique_counts.values, y=unique_counts.index, palette='Blues_d')
+    plt.title(f"Varianz pro Feld ({file_label})")
+    plt.xlabel("Anzahl unterschiedlicher Werte")
+    plt.ylabel("Feld")
+    plt.tight_layout()
+    plt.savefig(f"{output_dir}/field_variance_plot.png")
+    plt.close()
+    print(f"Plot zur Feld-Varianz gespeichert unter {output_dir}/field_variance_plot.png")
+
 # Beispielnutzung:
 # perform_eda("deine_datei.csv", "CSV Datei")
 # perform_eda("MAT-684500001-20250712112631.xml", "XML Artikel Daten")
-perform_eda("MAT-684500006-20250712112627.xml", "TecCMD_Plattform_Daten-ZF-06")    
+perform_eda("skf.europe.ArticleMasterData_20250716025535.xml", "TecCMD_Plattform_Daten-SKF")    

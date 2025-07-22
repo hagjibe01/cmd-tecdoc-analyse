@@ -14,7 +14,7 @@ def perform_eda(file_path, file_label):
     os.makedirs(output_dir, exist_ok=True)
 
     try:
-        df = pd.read_csv(file_path, encoding='utf-8', sep=None, engine='python')
+        df = pd.read_csv(file_path, encoding='utf-8', sep=None, engine='python', nrows=100000)
     except Exception as e:
         print(f"Error reading file {file_path}: {e}")
         return
@@ -57,15 +57,22 @@ def perform_eda(file_path, file_label):
 
     # 6. Plot missing values (if any)
     if not missing_values.empty:
-        plt.figure(figsize=(10, 4))
-        sns.barplot(x=missing_values.index, y=missing_values.values)
-        plt.title(f"Missing Values per Column ({file_label})")
-        plt.xticks(rotation=45, ha='right')
+        # Visualisierung: Top 10 Spalten mit fehlenden Werten (in %)
+        missing_pct = df.isnull().mean().sort_values(ascending=False) * 100
+        top_missing_pct = missing_pct[missing_pct > 0].head(10)
+
+        plt.figure(figsize=(10, 6))
+        sns.barplot(x=top_missing_pct.values, y=top_missing_pct.index, palette="Blues_d")
+        plt.xlabel("Anteil fehlender Werte (%)")
+        plt.title(f"Top 10 Felder mit höchsten Fehlwertanteilen ({file_label})")
+        plt.xlim(0, 100)
         plt.tight_layout()
-        plt.savefig(f"{output_dir}/missing_values_plot.png")
+        plt.savefig(f"{output_dir}/top_missing_percentage_{file_label}.png")
         plt.close()
-        print(f"Missing values plot saved as PNG in {output_dir}")
+
+   
+
 
 # perform_eda("cmd_daten.csv", "CMD Daten")
 # perform_eda("beispiel.xml", "Beispiel XML")
-perform_eda("", "TecCMD_Plattform_Daten-02")
+perform_eda("mahle_001000106983000000000074658001_data_2025-07-16-07-16-34-689.csv", "TecCMD_BusinessCloud_Daten_Mahle-01")

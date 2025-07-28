@@ -5,11 +5,11 @@ import os
 import xml.etree.ElementTree as ET
 
 
-# EDA-Funktion mit zusätzlicher Ausgabe als CSV und PNG
+# EDA function with additional output as CSV and PNG
 def perform_eda(file_path, file_label):
     print(f"\n--- EDA for {file_label} ---")
 
-    # Output-Ordner vorbereiten
+    # Output directory preparation
     output_dir = f"eda_output/{file_label.replace(' ', '_')}"
     os.makedirs(output_dir, exist_ok=True)
 
@@ -57,20 +57,20 @@ def perform_eda(file_path, file_label):
 
     # 6. Plot missing values (if any)
     if not missing_values.empty:
-        # Visualisierung: Top 10 Spalten mit fehlenden Werten (in %)
+        # Visualization: Top 10 columns with missing values (in %)
         missing_pct = df.isnull().mean().sort_values(ascending=False) * 100
         top_missing_pct = missing_pct[missing_pct > 0].head(10)
 
         plt.figure(figsize=(10, 6))
         sns.barplot(x=top_missing_pct.values, y=top_missing_pct.index, palette="Blues_d")
-        plt.xlabel("Anteil fehlender Werte (%)")
-        plt.title(f"Top 10 Felder mit höchsten Fehlwertanteilen ({file_label})")
+        plt.xlabel("Percentage of missing values (%)")
+        plt.title(f"Top 10 fields with highest missing value percentages ({file_label})")
         plt.xlim(0, 100)
         plt.tight_layout()
         plt.savefig(f"{output_dir}/top_missing_percentage_{file_label}.png")
         plt.close()
 
-           # 7. Boxplot ausgewählter numerischer Spalten
+           # 7. Boxplot of selected numerical columns
     """ Lieferant MAHLE
     boxplot_columns = [
         "gross_amount",
@@ -98,21 +98,19 @@ def perform_eda(file_path, file_label):
     ]
 
 
-    # Filtere nur Spalten, die im DataFrame existieren und mehr als 10 nicht-leere Werte haben
+    # Filter only columns that exist in the DataFrame and have more than 10 non-empty values
     valid_columns = [col for col in boxplot_columns_TMD if col in df.columns and df[col].notnull().sum() > 10]
 
     if valid_columns:
         plt.figure(figsize=(12, 6))
-        sns.boxplot(data=df[valid_columns], orient="h", showfliers=False)  # ohne Ausreißer
-        plt.title(f"Boxplot ausgewählter numerischer Felder ({file_label})")
+        sns.boxplot(data=df[valid_columns], orient="h", showfliers=False)  # without outliers
+        plt.title(f"Boxplot of selected numerical fields ({file_label})")
         plt.tight_layout()
         plt.savefig(f"{output_dir}/boxplot_{file_label}.png")
         plt.close()
-        print(f"Boxplot gespeichert unter: {output_dir}/boxplot_{file_label}.png")
+        print(f"Boxplot saved at: {output_dir}/boxplot_{file_label}.png")
     else:
-        print("Keine geeigneten Spalten für Boxplot vorhanden.")
+        print("No suitable columns available for boxplot.")
 
-
-# perform_eda("cmd_daten.csv", "CMD Daten")
-# perform_eda("beispiel.xml", "Beispiel XML")
+# perform_eda("cmd_daten.csv", "CMD data")
 perform_eda("tmd_001000106869000000000065516001_data_2025-07-15-09-42-29-416.csv", "TecCMD_BusinessCloud_Daten_TMD-02")

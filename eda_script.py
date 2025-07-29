@@ -113,4 +113,4 @@ def perform_eda(file_path, file_label):
         print("No suitable columns available for boxplot.")
 
 # perform_eda("cmd_daten.csv", "CMD data")
-perform_eda("tmd_001000106869000000000065516001_data_2025-07-15-09-42-29-416.csv", "TecCMD_BusinessCloud_Daten_TMD-02")
+perform_eda("200 - Article Table.csv", "200_Article_Table")

@@ -1,0 +1,1 @@
+Number of fully duplicated rows: 30

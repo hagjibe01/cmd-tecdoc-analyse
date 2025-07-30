@@ -113,4 +113,4 @@ def perform_eda(file_path, file_label):
         print("No suitable columns available for boxplot.")
 
 # perform_eda("cmd_daten.csv", "CMD data")
-perform_eda("200 - Article Table.csv", "200_Article_Table")
+perform_eda("209_GTIN.csv", "209_GTIN")

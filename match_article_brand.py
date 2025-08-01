@@ -21,6 +21,9 @@ matched = pd.merge(
 )
 
 print(f"✅ Gefundene Matches (nur Artikelnummer): {len(matched)}")
+print(tecdoc_terms['datasupplier_id'].value_counts().head(10))
+print(tecdoc_terms[['datasupplier_id', 'term']].dropna().drop_duplicates().head(20))
+
 
 # Speichern
-matched.to_csv("matching_output/match_article_only.csv", index=False)
+#matched.to_csv("matching_output/match_article_only.csv", index=False)

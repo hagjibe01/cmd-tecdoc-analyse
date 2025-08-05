@@ -1,63 +1,54 @@
+
 import pandas as pd
 import os
 
-# =====================
-# 🔹 Konfiguration
-# =====================
-CMD_PATH = "tmd_001000106869000000000065516001_data_2025-07-15-09-42-29-416.csv"
-TECDOC_PATH = "400_Article_Linkage.csv"
-CHUNKSIZE = 100_000
-OUTPUT_PATH = "matching_output/match_genart_datasupplier_chunked.csv"
-# Optional: Nur die ersten N Chunks verarbeiten (None = alle)
-MAX_CHUNKS = 500  # z.B. 5 Chunks für schnellen Test, None für alle
+def match_by_generic_article(cmd_path, tecdoc_path, output_path, chunksize=100_000, max_chunks=None):
+    """
+    Führt Matching basierend auf generic_article_no durch und speichert die Ergebnisse als CSV.
+    """
+    cmd_df = pd.read_csv(cmd_path, sep=";", dtype=str)
+    cmd_df['genartno'] = cmd_df['generic_article_no'].astype(str).str.strip().str.upper()
 
-# =====================
-# 🔹 CMD-Daten laden
-# =====================
-cmd_df = pd.read_csv(CMD_PATH, sep=";", dtype=str)
+    matches = []
+    chunk_iter = pd.read_csv(tecdoc_path, sep=",", dtype=str, chunksize=chunksize)
+    for i, chunk in enumerate(chunk_iter, 1):
+        print(f"🔍 Bearbeite Chunk {i} ...")
+        if i == 1:
+            print("Spalten im TecDoc-Chunk:", chunk.columns.tolist())
+        # Passe hier den Spaltennamen an! Beispiel: 'genartno' statt 'generic_article_no'
+        tecdoc_genart_col = 'genartno' if 'genartno' in chunk.columns else 'generic_article_no'
+        chunk['genartno'] = chunk[tecdoc_genart_col].astype(str).str.strip().str.upper()
+        merged = pd.merge(cmd_df, chunk[['genartno']], on='genartno', how='inner')
+        if not merged.empty:
+            print(f"✅ {len(merged)} Matches in Chunk {i}")
+            matches.append(merged)
+        if max_chunks is not None and i >= max_chunks:
+            print(f"⏹️  Abbruch nach {max_chunks} Chunks (Testmodus)")
+            break
+    if matches:
+        final_df = pd.concat(matches, ignore_index=True)
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        final_df.to_csv(output_path, index=False)
+        print(f"✅ Gefundene Matches: {len(final_df)} – gespeichert unter {output_path}")
+        return final_df
+    else:
+        print("⚠️ Keine Übereinstimmungen gefunden.")
+        return pd.DataFrame()
 
-cmd_df['article_number_clean'] = cmd_df['article_number'].astype(str).str.upper().str.replace(r'\W+', '', regex=True)
-cmd_df['genartno'] = cmd_df['generic_article_no'].astype(str).str.strip()
-cmd_df['datasupplier_id_clean'] = cmd_df['tec_doc_data_supplier_number'].astype(str).str.strip()
+# Beispielaufruf:
+# match_by_generic_article(
+#     cmd_path="tmd_001000106869000000000065516001_data_2025-07-15-09-42-29-416.csv",
+#     tecdoc_path="400_Article_Linkage.csv",
+#     output_path="matching_output/match_genart_datasupplier_chunked.csv",
+#     chunksize=100_000,
+#     max_chunks=5
+# )
 
-# =====================
-# 🔹 Vorbereitung für Matching
-# =====================
-matches = []
-
-# =====================
-# 🔹 Chunkweises Lesen der TecDoc-Daten
-# =====================
-
-chunk_iter = pd.read_csv(TECDOC_PATH, sep=",", dtype=str, chunksize=CHUNKSIZE)
-
-for i, chunk in enumerate(chunk_iter, 1):
-    print(f"🔍 Bearbeite Chunk {i} ...")
-    chunk['article_number_clean'] = chunk['artno'].astype(str).str.upper().str.replace(r'\W+', '', regex=True)
-    chunk['genartno'] = chunk['genartno'].astype(str).str.strip()
-    chunk['datasupplier_id_clean'] = chunk['datasupplier_id'].astype(str).str.strip()
-
-    merged = pd.merge(
-        cmd_df,
-        chunk[['article_number_clean', 'genartno', 'datasupplier_id_clean']],
-        on=['article_number_clean', 'genartno', 'datasupplier_id_clean'],
-        how='inner'
+if __name__ == "__main__":
+    match_by_generic_article(
+        cmd_path="tmd_001000106869000000000065516001_data_2025-07-15-09-42-29-416.csv",
+        tecdoc_path="400_Article_Linkage.csv",
+        output_path="matching_output/match_genart_datasupplier_chunked.csv",
+        chunksize=100_000,
+        max_chunks=5
     )
-
-    if not merged.empty:
-        print(f"✅ {len(merged)} Matches in Chunk {i}")
-        matches.append(merged)
-    if MAX_CHUNKS is not None and i >= MAX_CHUNKS:
-        print(f"⏹️  Abbruch nach {MAX_CHUNKS} Chunks (Testmodus)")
-        break
-
-# =====================
-# 🔹 Ergebnisse speichern
-# =====================
-if matches:
-    final_df = pd.concat(matches, ignore_index=True)
-    os.makedirs("matching_output", exist_ok=True)
-    final_df.to_csv(OUTPUT_PATH, index=False)
-    print(f"✅ Gefundene Matches: {len(final_df)} – gespeichert unter {OUTPUT_PATH}")
-else:
-    print("⚠️ Keine Übereinstimmungen gefunden.")

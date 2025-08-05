@@ -2,9 +2,57 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 
+# ========== MATCHING AUF GENERIC ARTICLE NO ==========
+def match_by_generic_article(cmd_df, tecdoc_file, output_path="matching_output/match_genart.csv", chunksize=100_000):
+    """
+    Führt Matching basierend auf generic_article_no durch.
+    Speichert die Ergebnisse als CSV-Datei.
+    """
+    def clean_column(col):
+        return col.astype(str).str.strip().str.upper()
+
+    # CMD-Felder bereinigen
+    if 'generic_article_no' not in cmd_df.columns:
+        print("Spalte 'generic_article_no' nicht in CMD-Datei gefunden.")
+        return pd.DataFrame()
+    cmd_df['genart_clean'] = clean_column(cmd_df['generic_article_no'])
+
+    match_list = []
+
+    rows_processed = 0
+    for i, chunk in enumerate(pd.read_csv(tecdoc_file, dtype=str, chunksize=chunksize), 1):
+        if i == 1:
+            print("Spalten im TecDoc-Chunk:", chunk.columns.tolist())
+            print("CMD genart_clean Beispiele:", cmd_df['genart_clean'].dropna().unique()[:5])
+            chunk['genart_clean'] = clean_column(chunk['genartno'])
+            print("TecDoc genart_clean Beispiele:", chunk['genart_clean'].dropna().unique()[:5])
+        else:
+            chunk['genart_clean'] = clean_column(chunk['genartno'])
+        match_chunk = pd.merge(cmd_df, chunk, left_on='genart_clean', right_on='genart_clean', suffixes=('_cmd', '_tecdoc'))
+        print(f"GenArt-Matches in Chunk: {len(match_chunk)}")
+        match_list.append(match_chunk)
+        rows_processed += len(chunk)
+        if rows_processed >= 100_000:
+            print(f"Abbruch nach {rows_processed} Zeilen (Testmodus)")
+            break
+
+    if match_list:
+        all_matches = pd.concat(match_list, ignore_index=True)
+        spalten = ['generic_article_no', 'article_number', 'brand', 'artno', 'brandno']
+        vorhandene = [s for s in spalten if s in all_matches.columns]
+        reduced = all_matches[vorhandene]
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        reduced.to_csv(output_path, index=False)
+        print(f"\nGesamt-Matches GenArt: {len(reduced)} gespeichert in: {output_path}")
+        return reduced
+    else:
+        print("Keine Matches für generic_article_no gefunden.")
+        return pd.DataFrame()
+
+
 # Eingabedateien
 cmd_file = "tmd_001000106869000000000065516001_data_2025-07-15-09-42-29-416.csv"
-tecdoc_file = "200 - Article Table.csv"
+tecdoc_file = "400_Article_Linkage.csv"
 
 # Ordner für Ausgaben
 output_dir = "matching_output"
@@ -13,6 +61,11 @@ os.makedirs(output_dir, exist_ok=True)
 # CMD-Daten laden
 cmd_df = pd.read_csv(cmd_file, dtype=str, sep=None, engine='python')
 print("CMD-Daten geladen")
+
+
+
+# Jetzt ist cmd_df definiert, daher kann die Funktion aufgerufen werden
+match_by_generic_article(cmd_df, tecdoc_file)
 
 # Hilfsfunktion zur Spaltenbereinigung
 def clean_column(col):
@@ -107,12 +160,12 @@ def perform_ean_matching(cmd_df, tecdoc_file):
 # perform_ean_matching(cmd_df, tecdoc_file)
 
 # ========== MATCHING NACH SUPPLIER UND BRAND ==========
-
+""""
 def match_by_supplier_and_brand(cmd_df, tecdoc_file, output_path="matching_output/match_supplier_brand.csv", chunksize=100_000):
-    """
+    
     Führt Matching basierend auf Supplier-Part-Number und Brand durch.
     Speichert die Ergebnisse als CSV-Datei.
-    """
+    
     def clean_column(col):
         return col.astype(str).str.strip().str.upper()
 
@@ -157,5 +210,5 @@ def match_by_supplier_and_brand(cmd_df, tecdoc_file, output_path="matching_outpu
 
 match_by_supplier_and_brand(cmd_df, tecdoc_file)
 
-
+"""
 # ========== VISUALISIERUNG DER MATCHING-ERGEBNISSE ==========

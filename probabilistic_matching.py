@@ -55,13 +55,38 @@ def probabilistic_match(cmd_series, tecdoc_series, threshold=70):
                 })
     return pd.DataFrame(matches)
 
-# --- Matching durchführen ---
-prob_matches = probabilistic_match(cmd_df['trade_no_clean'], tecdoc_df['artno_clean'], threshold=70)
-prob_matches.to_csv(f"{output_dir}/probabilistic_trade_no_matches.csv", index=False)
-print(f"Probalibistische Matches gespeichert: {len(prob_matches)}")
-
-# --- Übersicht ausgeben ---
-if not prob_matches.empty:
-    print(prob_matches.head())
+"""
+Matching für verschiedene Spalten durchführen und Ergebnisse speichern
+"""
+# TradeNo <-> artno
+prob_matches_trade = probabilistic_match(cmd_df['trade_no_clean'], tecdoc_df['artno_clean'], threshold=70)
+prob_matches_trade.to_csv(f"{output_dir}/probabilistic_trade_no_matches.csv", index=False)
+print(f"Probalibistische Matches TradeNo-artno gespeichert: {len(prob_matches_trade)}")
+if not prob_matches_trade.empty:
+    print("Beispiel TradeNo-artno:")
+    print(prob_matches_trade.head())
 else:
-    print("Keine probabilistischen Matches gefunden.")
+    print("Keine probabilistischen Matches für TradeNo-artno gefunden.")
+
+# SupplierPtNo <-> artno
+prob_matches_supplier = probabilistic_match(cmd_df['supplier_pt_no_clean'], tecdoc_df['artno_clean'], threshold=70)
+prob_matches_supplier.to_csv(f"{output_dir}/probabilistic_supplierptno_matches.csv", index=False)
+print(f"Probalibistische Matches SupplierPtNo-artno gespeichert: {len(prob_matches_supplier)}")
+if not prob_matches_supplier.empty:
+    print("Beispiel SupplierPtNo-artno:")
+    print(prob_matches_supplier.head())
+else:
+    print("Keine probabilistischen Matches für SupplierPtNo-artno gefunden.")
+
+# Brand <-> brandno (sofern vorhanden)
+if 'brandno' in tecdoc_df.columns:
+    tecdoc_df['brandno_clean'] = clean_column(tecdoc_df['brandno'])
+    prob_matches_brand = probabilistic_match(cmd_df['brand'].astype(str).str.upper().str.replace(r'\W+', '', regex=True), tecdoc_df['brandno_clean'], threshold=70)
+    prob_matches_brand.to_csv(f"{output_dir}/probabilistic_brand_matches.csv", index=False)
+    print(f"Probalibistische Matches Brand-brandno gespeichert: {len(prob_matches_brand)}")
+    if not prob_matches_brand.empty:
+        print("Beispiel Brand-brandno:")
+        print(prob_matches_brand.head())
+    else:
+        print("Keine probabilistischen Matches für Brand-brandno gefunden.")
+"""Diese Datei wurde entfernt. Alle deterministischen Matchings sind jetzt in match.py enthalten."""

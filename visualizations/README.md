@@ -53,7 +53,9 @@
 - ✅ Numeric Exact Match (exakte Zahlen)
 - ✅ Length-based Match (gleiche Länge)
 
-**Ausgabe**: `deterministic_matching_results_pure.csv`
+**Ausgaben**:
+- `deterministic_matching_results_pure.csv` (CSV-Matching)
+- `xml_deterministic_matching_results.csv` (XML-Matching)
 
 ---
 
@@ -66,30 +68,36 @@
 - 🔤 Phonetic Matching (ähnlich klingende Wörter)
 - 📊 Similarity Ratio (Ähnlichkeits-Score)
 
-**Ausgabe**: `fuzzy_matching_results.csv`
+**Ausgaben**:
+- `fuzzy_matching_results.csv` (CSV-Matching)
+- `xml_fuzzy_matching_results.csv` (XML-Matching)
 
 ---
 
 ## 🚀 **Ausführung der Skripte**
 
-### **XML-Analysen**:
+### **XML-Analysen (getrennt)**:
 ```powershell
+# Deterministische XML-Verfahren
+python xml_deterministic_matching.py
+
+# Fuzzy/Probabilistic XML-Verfahren  
+python xml_fuzzy_matching.py
+
+# Originalvisualisierung (gemischt)
 python matching_visualization.py
 ```
 
-### **CSV-Analysen**:
+### **CSV-Analysen (getrennt)**:
 ```powershell
-python tecdoc_tmd_visualization.py
-```
-
-### **Deterministic Matching**:
-```powershell
+# Deterministische CSV-Verfahren
 python deterministic_matching_pure.py
-```
 
-### **Fuzzy Matching**:
-```powershell
+# Fuzzy/Probabilistic CSV-Verfahren
 python fuzzy_matching_advanced.py
+
+# CSV-Visualisierungen
+python tecdoc_tmd_visualization.py
 ```
 
 ---

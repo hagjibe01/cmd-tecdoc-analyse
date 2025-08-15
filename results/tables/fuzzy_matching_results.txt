@@ -1,0 +1,29 @@
+# Fuzzy Matching-Ergebnisse
+
+Basierend auf fuzzy_methods_overview Daten
+
+Quelle             Zielspalte         Methode Matches Erfolgsrate (%)
+   CSV         article_number     Levenshtein  31.250            44.6
+   CSV         article_number    Jaro-Winkler  29.100            41.6
+   CSV tec_doc_article_number     Levenshtein  27.850            39.8
+   CSV tec_doc_article_number    Jaro-Winkler  24.200            34.6
+   CSV         article_number Probabilistisch  22.400            32.0
+   CSV tec_doc_article_number Probabilistisch  18.650            26.6
+   CSV         article_number      Phonetisch   8.950            12.8
+   CSV tec_doc_article_number      Phonetisch   7.200            10.3
+   CSV                    ean     Levenshtein   6.850             9.8
+   CSV                    ean    Jaro-Winkler   4.200             6.0
+   XML           SupplierPtNo     Levenshtein   4.120             5.9
+   XML                TradeNo     Levenshtein   3.890             5.6
+   XML           SupplierPtNo    Jaro-Winkler   3.650             5.2
+   XML                TradeNo    Jaro-Winkler   3.200             4.6
+   XML                TradeNo Probabilistisch   2.890             4.1
+   XML           SupplierPtNo Probabilistisch   2.200             3.1
+   XML                  Brand     Levenshtein   2.150             3.1
+   CSV                    ean Probabilistisch   2.100             3.0
+   XML                  Brand    Jaro-Winkler   1.650             2.4
+   XML                  Brand Probabilistisch     980             1.4
+   CSV                    ean      Phonetisch     950             1.4
+   XML           SupplierPtNo      Phonetisch     850             1.2
+   XML                TradeNo      Phonetisch     750             1.1
+   XML                  Brand      Phonetisch     450             0.6

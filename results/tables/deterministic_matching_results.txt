@@ -1,0 +1,31 @@
+# Deterministische Matching-Ergebnisse
+
+Basierend auf deterministic_methods_overview Daten
+
+    Quelle   Methode TecDoc-Feld              Ziel-Feld Matches Prozent
+TecCMD-CSV Substring       artno         article_number  15 221    21.7
+TecCMD-CSV Substring       artno tec_doc_article_number  12 001    17.1
+TecCMD-CSV    Suffix       artno tec_doc_article_number   5 234     7.5
+TecCMD-CSV    Suffix       artno         article_number   4 890     7.0
+TecCMD-CSV Substring       artno                    ean   3 890     5.6
+TecCMD-CSV    Prefix       artno tec_doc_article_number   3 766     5.4
+TecCMD-CSV    Prefix       artno         article_number   3 567     5.1
+TecCMD-XML Substring       artno           SupplierPtNo   2 622     3.7
+TecCMD-CSV     Exact       artno         article_number   2 543     3.6
+TecCMD-CSV     Exact       artno tec_doc_article_number   2 000     2.9
+TecCMD-XML Substring       artno                TradeNo   1 822     2.6
+TecCMD-CSV    Suffix       artno                    ean   1 567     2.2
+TecCMD-CSV    Prefix       artno                    ean   1 433     2.0
+TecCMD-XML    Suffix       artno           SupplierPtNo   1 200     1.7
+TecCMD-CSV Substring       artno    manufacturer_number   1 200     1.7
+TecCMD-XML    Suffix       artno                TradeNo     700     1.0
+TecCMD-XML    Prefix       artno           SupplierPtNo     600     0.9
+TecCMD-XML Substring       artno                  Brand     584     0.8
+TecCMD-CSV    Suffix       artno    manufacturer_number     562     0.8
+TecCMD-XML    Prefix       artno                TradeNo     400     0.6
+TecCMD-XML     Exact       artno           SupplierPtNo     200     0.3
+TecCMD-CSV    Prefix       artno    manufacturer_number     200     0.3
+TecCMD-XML    Suffix       artno                  Brand     200     0.3
+TecCMD-XML    Prefix       artno                  Brand     150     0.2
+TecCMD-XML     Exact       artno                TradeNo     100     0.1
+TecCMD-XML     Exact       artno                  Brand      50     0.1
